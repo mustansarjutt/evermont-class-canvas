@@ -1,0 +1,9 @@
+services:
+  class-canvas:
+    container_name: evermont-class-canvas
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:4001:3000"
+    restart: unless-stopped
