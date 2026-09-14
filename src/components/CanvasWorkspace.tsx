@@ -275,7 +275,7 @@ export default function CanvasWorkspace({ theme }: CanvasWorkspaceProps) {
     if (dataUrl) {
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = "class-canvas.png";
+      a.download = `class-canvas-${Date.now()}.png`;
       a.click();
     }
   };

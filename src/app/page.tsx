@@ -42,7 +42,7 @@ export default function Home() {
         <div
           className={`absolute inset-0 flex flex-col transition-opacity duration-300 print:opacity-100 print:relative print:z-50 print:block ${currentView === "notes" ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
         >
-          <NotesView theme={theme} notes={notes} />
+          <NotesView theme={theme} notes={notes} onClearNotes={() => setNotes("")} />
         </div>
       </div>
     </div>

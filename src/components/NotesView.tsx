@@ -8,14 +8,15 @@ import {
   vs,
   vscDarkPlus,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Download, FileText } from "lucide-react";
+import { Download, FileText, Trash2, Loader2 } from "lucide-react";
 
 type NotesViewProps = {
   theme: "light" | "dark";
   notes: string;
+  onClearNotes: () => void;
 };
 
-export default function NotesView({ theme, notes }: NotesViewProps) {
+export default function NotesView({ theme, notes, onClearNotes }: NotesViewProps) {
   const [isPrinting, setIsPrinting] = useState(false);
 
   // Custom components to style the markdown without needing @tailwindcss/typography
@@ -82,6 +83,8 @@ export default function NotesView({ theme, notes }: NotesViewProps) {
   };
 
   const handleSaveAsPDF = async () => {
+    if (notes.trim() === "") return;
+    
     try {
       setIsPrinting(true);
       // Wait for React to re-render and remove overflow-y-auto
@@ -93,7 +96,7 @@ export default function NotesView({ theme, notes }: NotesViewProps) {
 
       const opt = {
         margin: 10,
-        filename: "class-notes.pdf",
+        filename: `class-notes-${Date.now()}.pdf`,
         image: { type: "jpeg" as const, quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, windowWidth: 1024 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" as const },
@@ -114,16 +117,36 @@ export default function NotesView({ theme, notes }: NotesViewProps) {
     >
       <div className="flex justify-between items-center mb-4 print:hidden">
         <h2 className="text-2xl font-bold">Class Notes</h2>
-        <button
-          onClick={handleSaveAsPDF}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md ${
-            theme === "dark"
-              ? "bg-blue-600 hover:bg-blue-500 text-white"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
-          }`}
-        >
-          <Download size={16} /> Save as PDF
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={onClearNotes}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md ${
+              theme === "dark"
+                ? "bg-red-600 hover:bg-red-500 text-white"
+                : "bg-red-600 hover:bg-red-700 text-white"
+            }`}
+          >
+            <Trash2 size={16} /> Clear Notes
+          </button>
+          <button
+            onClick={handleSaveAsPDF}
+            disabled={isPrinting || notes.trim() === ""}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-md ${
+              isPrinting || notes.trim() === "" ? "opacity-50 cursor-not-allowed" : ""
+            } ${
+              theme === "dark"
+                ? "bg-blue-600 hover:bg-blue-500 text-white"
+                : "bg-blue-600 hover:bg-blue-700 text-white"
+            }`}
+          >
+            {isPrinting ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+            {isPrinting ? "Saving..." : "Save as PDF"}
+          </button>
+        </div>
       </div>
 
       <div
